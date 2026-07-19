@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { getSigner, getContract } from './lib/ethereum';
-import { Wallet, PlusCircle, CheckCircle2, AlertCircle, Building2, ThumbsUp, ThumbsDown, Info, LayoutDashboard, HelpCircle } from 'lucide-react';
+import { getSigner, getContract, ACCOUNTS } from './lib/ethereum';
+import { Wallet, PlusCircle, CheckCircle2, AlertCircle, Building2, ThumbsUp, ThumbsDown, Trash2, LayoutDashboard, ChevronDown } from 'lucide-react';
 
 interface Proposal {
   id: number;
@@ -19,12 +19,16 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [txHash, setTxHash] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [walletAddress, setWalletAddress] = useState<string>("0xac09...ff80");
-  const [showDocs, setShowDocs] = useState(false);
+  
+  // Wallet Switcher State
+  const [currentAccountIndex, setCurrentAccountIndex] = useState(0);
+  const [showWalletDropdown, setShowWalletDropdown] = useState(false);
+
+  const currentAccount = ACCOUNTS[currentAccountIndex];
 
   const loadData = async () => {
     try {
-      const signer = getSigner();
+      const signer = getSigner(currentAccount.key);
       const contract = getContract(signer);
       
       const count = await contract.proposalCount();
@@ -32,14 +36,17 @@ function App() {
       
       for (let i = 1; i <= Number(count); i++) {
         const p = await contract.getProposal(i);
-        loadedProposals.push({
-          id: Number(p.id),
-          title: p.title,
-          description: p.description,
-          votesFor: Number(p.votesFor),
-          votesAgainst: Number(p.votesAgainst),
-          active: p.active
-        });
+        // Only show if title is not empty (deleted proposals have empty titles in our Solidity implementation)
+        if (p.title !== "") {
+          loadedProposals.push({
+            id: Number(p.id),
+            title: p.title,
+            description: p.description,
+            votesFor: Number(p.votesFor),
+            votesAgainst: Number(p.votesAgainst),
+            active: p.active
+          });
+        }
       }
       setProposals(loadedProposals.reverse()); // Show newest first
     } catch (err) {
@@ -52,30 +59,25 @@ function App() {
     loadData();
 
     try {
-      const signer = getSigner();
+      // Re-attach event listeners with the current signer to prevent stale references
+      const signer = getSigner(currentAccount.key);
       const contract = getContract(signer);
       
-      const onProposalCreated = (id: bigint, title: string) => {
-        console.log(`ProposalCreated: ${title}`);
-        loadData();
-      };
+      const onEvent = () => loadData();
 
-      const onVoted = (id: bigint, voter: string, support: boolean) => {
-        console.log(`Voted on ${id}: ${support}`);
-        loadData();
-      };
-
-      contract.on("ProposalCreated", onProposalCreated);
-      contract.on("Voted", onVoted);
+      contract.on("ProposalCreated", onEvent);
+      contract.on("Voted", onEvent);
+      contract.on("ProposalDeleted", onEvent);
 
       return () => {
-        contract.off("ProposalCreated", onProposalCreated);
-        contract.off("Voted", onVoted);
+        contract.off("ProposalCreated", onEvent);
+        contract.off("Voted", onEvent);
+        contract.off("ProposalDeleted", onEvent);
       };
     } catch (err) {
       console.warn("Event listeners could not be attached.", err);
     }
-  }, []);
+  }, [currentAccountIndex]); // Reload when account changes
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -85,7 +87,7 @@ function App() {
     setError(null);
     setTxHash(null);
     try {
-      const signer = getSigner();
+      const signer = getSigner(currentAccount.key);
       const contract = getContract(signer);
       const tx = await contract.createProposal(newTitle, newDesc);
       setTxHash(tx.hash);
@@ -104,23 +106,47 @@ function App() {
     setError(null);
     setTxHash(null);
     try {
-      const signer = getSigner();
+      const signer = getSigner(currentAccount.key);
       const contract = getContract(signer);
       const tx = await contract.castVote(id, support);
       setTxHash(tx.hash);
       await tx.wait();
       loadData();
     } catch (err: any) {
-      setError(err.reason || "Voting failed. You might have already voted.");
+      setError(err.reason || "Voting failed. You might have already voted from this account.");
+    }
+    setLoading(false);
+  };
+
+  const handleDelete = async (id: number) => {
+    // In a real DAO, deletion is restricted. For demo, anyone can delete.
+    if (!window.confirm("Are you sure you want to permanently delete this proposal from the blockchain?")) return;
+    
+    setLoading(true);
+    setError(null);
+    setTxHash(null);
+    try {
+      const signer = getSigner(currentAccount.key);
+      const contract = getContract(signer);
+      const tx = await contract.deleteProposal(id);
+      setTxHash(tx.hash);
+      await tx.wait();
+      loadData();
+    } catch (err: any) {
+      setError(err.reason || "Deletion failed.");
     }
     setLoading(false);
   };
 
   return (
-    <div className="min-h-screen font-sans text-slate-100 pb-20 selection:bg-primary/30">
+    <div className="min-h-screen font-sans text-slate-100 pb-20 selection:bg-primary/30 relative">
       
+      {/* Background Orbs */}
+      <div className="bg-glow-1"></div>
+      <div className="bg-glow-2"></div>
+
       {/* Premium Header */}
-      <header className="bg-slate-900/80 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50 shadow-xl shadow-black/20">
+      <header className="bg-slate-900/40 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="bg-gradient-to-br from-primary to-accent p-2.5 rounded-xl shadow-lg shadow-primary/20">
@@ -132,15 +158,52 @@ function App() {
             </div>
           </div>
           
-          <div className="flex items-center gap-3 bg-slate-800/80 px-4 py-2 rounded-full border border-slate-700 shadow-inner">
-            <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]"></div>
-            <span className="text-sm font-semibold text-slate-300 hidden sm:inline-block">{walletAddress}</span>
-            <Wallet className="w-4 h-4 text-slate-400 ml-2" />
+          {/* Wallet Switcher */}
+          <div className="relative">
+            <button 
+              onClick={() => setShowWalletDropdown(!showWalletDropdown)}
+              className="flex items-center gap-3 bg-slate-800/80 hover:bg-slate-700/80 transition-colors px-4 py-2.5 rounded-full border border-slate-700 shadow-inner"
+            >
+              <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]"></div>
+              <div className="text-left hidden sm:block">
+                <p className="text-xs font-bold text-white leading-tight">{currentAccount.name}</p>
+                <p className="text-[10px] text-slate-400 font-mono">{currentAccount.address.substring(0,8)}...{currentAccount.address.substring(38)}</p>
+              </div>
+              <ChevronDown className="w-4 h-4 text-slate-400 ml-1" />
+            </button>
+
+            <AnimatePresence>
+              {showWalletDropdown && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }}
+                  className="absolute right-0 mt-2 w-64 bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl overflow-hidden z-50"
+                >
+                  <div className="px-4 py-3 border-b border-slate-700 bg-slate-900/50">
+                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Select Identity</p>
+                  </div>
+                  <div className="p-2 space-y-1">
+                    {ACCOUNTS.map((acc, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => { setCurrentAccountIndex(idx); setShowWalletDropdown(false); }}
+                        className={`w-full text-left px-3 py-2 rounded-xl flex items-center justify-between transition-colors ${currentAccountIndex === idx ? 'bg-primary/20 text-primary' : 'hover:bg-slate-700 text-slate-300'}`}
+                      >
+                        <div>
+                          <p className="text-sm font-bold">{acc.name}</p>
+                          <p className="text-xs opacity-70 font-mono">{acc.address.substring(0,6)}...{acc.address.substring(38)}</p>
+                        </div>
+                        {currentAccountIndex === idx && <CheckCircle2 className="w-4 h-4" />}
+                      </button>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 mt-8 sm:mt-10">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 mt-12 relative z-10">
         
         {/* Toast Notifications */}
         <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3 w-full max-w-sm px-4 sm:px-0 pointer-events-none">
@@ -148,7 +211,7 @@ function App() {
             {error && (
               <motion.div 
                 initial={{ opacity: 0, x: 50, scale: 0.9 }} animate={{ opacity: 1, x: 0, scale: 1 }} exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
-                className="bg-slate-800 border-l-4 border-rose-500 text-slate-200 p-4 rounded-xl shadow-2xl flex items-start gap-3 pointer-events-auto"
+                className="bg-slate-800/90 backdrop-blur-md border-l-4 border-rose-500 text-slate-200 p-4 rounded-xl shadow-2xl flex items-start gap-3 pointer-events-auto"
               >
                 <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5 text-rose-500" />
                 <div>
@@ -162,7 +225,7 @@ function App() {
             {txHash && (
               <motion.div 
                 initial={{ opacity: 0, x: 50, scale: 0.9 }} animate={{ opacity: 1, x: 0, scale: 1 }} exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
-                className="bg-slate-800 border-l-4 border-emerald-500 text-slate-200 p-4 rounded-xl shadow-2xl flex items-start gap-3 pointer-events-auto"
+                className="bg-slate-800/90 backdrop-blur-md border-l-4 border-emerald-500 text-slate-200 p-4 rounded-xl shadow-2xl flex items-start gap-3 pointer-events-auto"
               >
                 <CheckCircle2 className="w-5 h-5 flex-shrink-0 mt-0.5 text-emerald-500" />
                 <div>
@@ -175,58 +238,27 @@ function App() {
           </AnimatePresence>
         </div>
 
-        {/* Documentation / Guide Banner */}
-        <motion.div layout className="mb-10">
-          <button 
-            onClick={() => setShowDocs(!showDocs)}
-            className="w-full flex items-center justify-between bg-slate-800/40 hover:bg-slate-800/60 border border-slate-700 p-4 rounded-2xl transition-colors"
-          >
-            <div className="flex items-center gap-3">
-              <div className="bg-primary/20 p-2 rounded-lg">
-                <HelpCircle className="w-5 h-5 text-primary" />
-              </div>
-              <span className="font-semibold text-slate-200">How to use NexusDAO</span>
-            </div>
-            <span className="text-slate-400 text-sm font-medium">{showDocs ? 'Hide Guide' : 'Show Guide'}</span>
-          </button>
-          
-          <AnimatePresence>
-            {showDocs && (
-              <motion.div 
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                className="overflow-hidden"
-              >
-                <div className="bg-slate-800/40 border border-t-0 border-slate-700 p-6 rounded-b-2xl mt-[-8px] text-sm text-slate-300 space-y-4 pt-8">
-                  <p><strong className="text-white">1. Create a Proposal:</strong> Use the form on the right (or below on mobile) to submit a new idea. This will trigger a <code className="bg-slate-900 px-1 py-0.5 rounded text-primary">createProposal</code> transaction on the Ethereum network.</p>
-                  <p><strong className="text-white">2. Vote on Proposals:</strong> Click "Support" or "Reject" on any active proposal. This sends a <code className="bg-slate-900 px-1 py-0.5 rounded text-primary">castVote</code> transaction. Note: A wallet address can only vote once per proposal.</p>
-                  <p><strong className="text-white">3. Real-time Web3:</strong> All changes are instantly synced using Ethers.js Event Listeners (<code className="bg-slate-900 px-1 py-0.5 rounded text-primary">ProposalCreated</code> and <code className="bg-slate-900 px-1 py-0.5 rounded text-primary">Voted</code>). No page reload required!</p>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </motion.div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-10">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 xl:gap-12">
           
           {/* Main Board - Proposals */}
-          <div className="lg:col-span-2 space-y-6">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-2xl font-bold flex items-center gap-2 text-white">
-                <LayoutDashboard className="w-6 h-6 text-primary" />
+          <div className="xl:col-span-2 space-y-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-3xl font-extrabold flex items-center gap-3 text-white">
+                <LayoutDashboard className="w-8 h-8 text-primary drop-shadow-[0_0_15px_rgba(59,130,246,0.5)]" />
                 Active Proposals
               </h2>
-              <span className="text-sm bg-primary/10 text-primary font-semibold px-3 py-1 rounded-full border border-primary/20">
+              <span className="text-sm bg-slate-800/80 text-slate-300 font-semibold px-4 py-1.5 rounded-full border border-slate-700 shadow-inner">
                 {proposals.length} Total
               </span>
             </div>
             
             {proposals.length === 0 ? (
-              <div className="glass rounded-2xl p-16 text-center border border-dashed border-slate-600">
-                <Info className="w-12 h-12 text-slate-500 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-slate-300">No proposals yet</h3>
-                <p className="text-sm text-slate-500 mt-1">Be the first to create a proposal for the DAO.</p>
+              <div className="glass rounded-3xl p-16 text-center border-dashed border-slate-600/50">
+                <div className="bg-slate-800/50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
+                  <LayoutDashboard className="w-10 h-10 text-slate-500" />
+                </div>
+                <h3 className="text-xl font-bold text-white">No active proposals</h3>
+                <p className="text-sm text-slate-400 mt-2">The governance board is waiting for a new idea.</p>
               </div>
             ) : (
               <div className="space-y-6">
@@ -238,61 +270,79 @@ function App() {
                   return (
                     <motion.div
                       key={p.id}
-                      initial={{ opacity: 0, y: 20 }}
+                      initial={{ opacity: 0, y: 30 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.05 }}
-                      whileHover={{ scale: 1.01 }}
-                      className="glass rounded-2xl p-6 transition-all duration-300 border border-slate-700 hover:border-slate-500 hover:shadow-primary/5"
+                      transition={{ delay: index * 0.1, type: "spring", stiffness: 100 }}
+                      className="glass rounded-3xl p-8 transition-all duration-300 border border-slate-700/50 hover:border-slate-500/80 hover:shadow-[0_0_30px_rgba(59,130,246,0.15)] group relative overflow-hidden"
                     >
-                      <div className="flex justify-between items-start mb-4">
+                      {/* Subtle gradient overlay on hover */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+
+                      <div className="flex justify-between items-start mb-6 relative z-10">
                         <div>
-                          <span className="text-xs font-bold text-primary tracking-widest uppercase mb-1 block opacity-80">
-                            Proposal #{p.id}
-                          </span>
-                          <h3 className="text-xl font-bold text-white leading-tight">{p.title}</h3>
+                          <div className="flex items-center gap-3 mb-2">
+                            <span className="text-[10px] font-extrabold text-primary tracking-[0.2em] uppercase bg-primary/10 px-2 py-1 rounded-md">
+                              PROP-{p.id}
+                            </span>
+                            <span className={`text-[10px] font-extrabold px-2 py-1 rounded-md uppercase tracking-wider ${p.active ? 'bg-emerald-500/10 text-emerald-400' : 'bg-slate-800 text-slate-500'}`}>
+                              {p.active ? 'Active' : 'Closed'}
+                            </span>
+                          </div>
+                          <h3 className="text-2xl font-extrabold text-white leading-tight drop-shadow-sm">{p.title}</h3>
                         </div>
-                        <span className={`text-xs font-bold px-3 py-1 rounded-full ${p.active ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-slate-800 text-slate-500 border border-slate-700'}`}>
-                          {p.active ? 'ACTIVE' : 'CLOSED'}
-                        </span>
+                        
+                        {/* Delete Button (Only visible on hover or mobile) */}
+                        <button 
+                          onClick={() => handleDelete(p.id)}
+                          disabled={loading}
+                          className="bg-slate-800/50 hover:bg-rose-500/20 hover:text-rose-400 text-slate-500 p-2.5 rounded-xl transition-all border border-transparent hover:border-rose-500/30 group-hover:opacity-100 sm:opacity-0"
+                          title="Delete Proposal"
+                        >
+                          <Trash2 className="w-5 h-5" />
+                        </button>
                       </div>
                       
-                      <p className="text-slate-300 text-sm leading-relaxed mb-6 bg-slate-900/50 p-4 rounded-xl border border-slate-800/50">
+                      <p className="text-slate-300 text-sm leading-relaxed mb-8 bg-slate-900/60 p-5 rounded-2xl border border-slate-800/80 shadow-inner relative z-10">
                         {p.description}
                       </p>
                       
                       {/* Voting Stats Bar */}
-                      <div className="mb-6">
-                        <div className="flex justify-between text-xs font-bold mb-2">
-                          <span className="text-emerald-400">{p.votesFor} For ({forPercent}%)</span>
-                          <span className="text-rose-400">{p.votesAgainst} Against ({againstPercent}%)</span>
+                      <div className="mb-8 relative z-10">
+                        <div className="flex justify-between text-sm font-bold mb-3">
+                          <span className="text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.3)]">{p.votesFor} FOR ({forPercent}%)</span>
+                          <span className="text-rose-400 drop-shadow-[0_0_8px_rgba(244,63,94,0.3)]">{p.votesAgainst} AGAINST ({againstPercent}%)</span>
                         </div>
-                        <div className="w-full h-2.5 bg-slate-800 rounded-full overflow-hidden flex shadow-inner">
+                        <div className="w-full h-3.5 bg-slate-900 rounded-full overflow-hidden flex shadow-inner border border-slate-800">
                           <motion.div 
-                            initial={{ width: 0 }} animate={{ width: `${forPercent}%` }} transition={{ duration: 1, ease: "easeOut" }}
-                            className="h-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]"
-                          />
+                            initial={{ width: 0 }} animate={{ width: `${forPercent}%` }} transition={{ duration: 1.5, ease: "easeOut" }}
+                            className="h-full bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.6)] relative"
+                          >
+                            <div className="absolute inset-0 bg-white/20 w-full h-full"></div>
+                          </motion.div>
                           <motion.div 
-                            initial={{ width: 0 }} animate={{ width: `${againstPercent}%` }} transition={{ duration: 1, ease: "easeOut" }}
-                            className="h-full bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.5)]"
-                          />
+                            initial={{ width: 0 }} animate={{ width: `${againstPercent}%` }} transition={{ duration: 1.5, ease: "easeOut" }}
+                            className="h-full bg-rose-500 shadow-[0_0_15px_rgba(244,63,94,0.6)] relative"
+                          >
+                            <div className="absolute inset-0 bg-white/20 w-full h-full"></div>
+                          </motion.div>
                         </div>
                       </div>
 
                       {/* Actions */}
-                      <div className="flex flex-col sm:flex-row gap-3 pt-5 border-t border-slate-700/50">
+                      <div className="flex flex-col sm:flex-row gap-4 relative z-10">
                         <button
                           onClick={() => handleVote(p.id, true)}
                           disabled={loading || !p.active}
-                          className="flex-1 flex items-center justify-center gap-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-semibold py-3 rounded-xl transition-all disabled:opacity-30 disabled:hover:bg-emerald-500/10"
+                          className="flex-1 flex items-center justify-center gap-2 bg-slate-800 hover:bg-emerald-500/20 text-slate-300 hover:text-emerald-400 border border-slate-700 hover:border-emerald-500/50 font-bold py-3.5 rounded-2xl transition-all disabled:opacity-30 disabled:hover:bg-slate-800 group/btn"
                         >
-                          <ThumbsUp className="w-4 h-4" /> Support
+                          <ThumbsUp className="w-5 h-5 group-hover/btn:scale-110 transition-transform" /> Support
                         </button>
                         <button
                           onClick={() => handleVote(p.id, false)}
                           disabled={loading || !p.active}
-                          className="flex-1 flex items-center justify-center gap-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 font-semibold py-3 rounded-xl transition-all disabled:opacity-30 disabled:hover:bg-rose-500/10"
+                          className="flex-1 flex items-center justify-center gap-2 bg-slate-800 hover:bg-rose-500/20 text-slate-300 hover:text-rose-400 border border-slate-700 hover:border-rose-500/50 font-bold py-3.5 rounded-2xl transition-all disabled:opacity-30 disabled:hover:bg-slate-800 group/btn"
                         >
-                          <ThumbsDown className="w-4 h-4" /> Reject
+                          <ThumbsDown className="w-5 h-5 group-hover/btn:scale-110 transition-transform" /> Reject
                         </button>
                       </div>
                     </motion.div>
@@ -304,47 +354,54 @@ function App() {
 
           {/* Admin / Creation Panel */}
           <div className="space-y-6">
-            <div className="glass rounded-2xl p-6 border border-slate-700 lg:sticky lg:top-28">
-              <h2 className="text-lg font-bold flex items-center gap-2 text-white mb-6">
-                <PlusCircle className="w-5 h-5 text-primary" />
-                Submit Proposal
+            <div className="glass rounded-3xl p-8 border border-slate-700 xl:sticky xl:top-28 shadow-2xl relative overflow-hidden">
+              {/* Subtle background flair */}
+              <div className="absolute -top-10 -right-10 w-40 h-40 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
+
+              <h2 className="text-xl font-extrabold flex items-center gap-3 text-white mb-8">
+                <div className="bg-primary/20 p-2 rounded-xl text-primary">
+                  <PlusCircle className="w-6 h-6" />
+                </div>
+                Draft Proposal
               </h2>
               
-              <form onSubmit={handleCreate} className="space-y-5">
+              <form onSubmit={handleCreate} className="space-y-6 relative z-10">
                 <div>
-                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">
-                    Title
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">
+                    Proposal Title
                   </label>
                   <input
                     type="text"
                     value={newTitle}
                     onChange={(e) => setNewTitle(e.target.value)}
                     disabled={loading}
-                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-slate-600 text-slate-200 font-medium"
+                    className="w-full bg-slate-900/80 border border-slate-700 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:border-primary/70 focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-slate-600 text-white font-medium shadow-inner"
                     placeholder="e.g. Upgrade Security Protocol"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">
-                    Description
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">
+                    Justification / Details
                   </label>
                   <textarea
                     value={newDesc}
                     onChange={(e) => setNewDesc(e.target.value)}
                     disabled={loading}
-                    rows={4}
-                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-slate-600 text-slate-200 resize-none"
-                    placeholder="Explain why the DAO should support this..."
+                    rows={5}
+                    className="w-full bg-slate-900/80 border border-slate-700 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:border-primary/70 focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-slate-600 text-white resize-none shadow-inner"
+                    placeholder="Explain why the DAO should support this initiative..."
                   />
                 </div>
                 <button
                   type="submit"
                   disabled={loading || !newTitle.trim() || !newDesc.trim()}
-                  className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90 text-white font-bold py-3.5 px-4 rounded-xl transition-all disabled:opacity-50 flex justify-center items-center gap-2 shadow-lg shadow-primary/20"
+                  className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-extrabold py-4 px-4 rounded-2xl transition-all disabled:opacity-50 disabled:grayscale flex justify-center items-center gap-3 shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:shadow-[0_0_30px_rgba(59,130,246,0.5)] transform hover:-translate-y-0.5 active:translate-y-0"
                 >
                   {loading ? (
-                    <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-                  ) : 'Sign & Submit'}
+                    <span className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                  ) : (
+                    <>Submit to Network</>
+                  )}
                 </button>
               </form>
             </div>

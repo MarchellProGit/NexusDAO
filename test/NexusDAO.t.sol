@@ -58,4 +58,13 @@ contract NexusDAOTest is Test {
         vm.prank(user1);
         dao.castVote(1, true);
     }
+
+    function testDeleteProposal() public {
+        dao.createProposal("Proposal to delete", "desc");
+        dao.deleteProposal(1);
+        
+        (uint256 id, string memory title,,,,) = dao.getProposal(1);
+        assertEq(bytes(title).length, 0); // Deleted struct strings default to empty
+        assertEq(id, 0); // uints default to 0
+    }
 }

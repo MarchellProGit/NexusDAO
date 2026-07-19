@@ -18,6 +18,7 @@ contract NexusDAO {
     event ProposalCreated(uint256 id, string title, string description);
     event Voted(uint256 indexed proposalId, address indexed voter, bool support);
     event ProposalClosed(uint256 id);
+    event ProposalDeleted(uint256 id);
 
     // WRITE 1: Create Proposal
     function createProposal(string memory _title, string memory _description) public {
@@ -63,6 +64,16 @@ contract NexusDAO {
         proposals[_proposalId].active = false;
         
         emit ProposalClosed(_proposalId);
+    }
+
+    // WRITE 4: Delete Proposal
+    function deleteProposal(uint256 _proposalId) public {
+        require(_proposalId > 0 && _proposalId <= proposalCount, "Invalid proposal ID");
+        require(bytes(proposals[_proposalId].title).length > 0, "Proposal already deleted");
+        
+        delete proposals[_proposalId];
+        
+        emit ProposalDeleted(_proposalId);
     }
 
     // READ 1: Get Proposal

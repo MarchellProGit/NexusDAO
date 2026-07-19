@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getSigner, getContract, ACCOUNTS } from './lib/ethereum';
-import { PlusCircle, CheckCircle2, AlertCircle, Building2, ThumbsUp, ThumbsDown, Trash2, LayoutDashboard, ChevronDown, Users, BookOpen, X, Code } from 'lucide-react';
+import { PlusCircle, CheckCircle2, AlertCircle, Building2, ThumbsUp, ThumbsDown, Trash2, LayoutDashboard, ChevronDown, Users, BookOpen, X, Code, Fingerprint } from 'lucide-react';
 
 interface Proposal {
   id: number;
@@ -137,25 +137,30 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen text-[#ededed] pb-20 selection:bg-white/20 relative">
-      <div className="elegant-bg"></div>
+    <div className="min-h-screen text-slate-100 pb-20 relative">
+      {/* Aurora Animated Background */}
+      <div className="aurora-bg">
+        <div className="aurora-1"></div>
+        <div className="aurora-2"></div>
+        <div className="aurora-3"></div>
+      </div>
 
-      {/* Clean Header */}
-      <header className="border-b border-white/[0.08] sticky top-0 z-40 bg-black/80 backdrop-blur-xl">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3 cursor-pointer">
-            <div className="bg-white text-black p-1.5 rounded-lg">
-              <Building2 className="w-5 h-5" />
+      {/* Header */}
+      <header className="sticky top-0 z-40 backdrop-blur-3xl bg-slate-900/30 border-b border-white/5">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
+          <div className="flex items-center gap-3 cursor-pointer group">
+            <div className="bg-gradient-to-br from-indigo-500 to-teal-400 p-2.5 rounded-2xl shadow-[0_0_20px_rgba(99,102,241,0.4)] group-hover:scale-105 transition-transform">
+              <Building2 className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-xl font-semibold tracking-tight text-white">NexusDAO</h1>
+              <h1 className="text-2xl font-bold tracking-tight text-white">NexusDAO</h1>
             </div>
           </div>
           
           <div className="flex items-center gap-4">
             <button 
               onClick={() => setShowDocsModal(true)}
-              className="hidden sm:flex items-center gap-2 text-sm font-medium text-[#a1a1aa] hover:text-white transition-colors px-3 py-1.5 rounded-md hover:bg-white/[0.05]"
+              className="hidden sm:flex items-center gap-2 text-sm font-semibold text-slate-300 hover:text-white transition-colors px-4 py-2 rounded-xl hover:bg-white/10"
             >
               <Users className="w-4 h-4" /> Team & Docs
             </button>
@@ -163,36 +168,36 @@ function App() {
             <div className="relative">
               <button 
                 onClick={() => setShowWalletDropdown(!showWalletDropdown)}
-                className="flex items-center gap-3 bg-white/[0.03] hover:bg-white/[0.06] transition-colors px-3 py-1.5 rounded-lg border border-white/[0.08] group"
+                className="flex items-center gap-3 bg-white/5 hover:bg-white/10 transition-colors px-5 py-2.5 rounded-2xl border border-white/10 shadow-sm group"
               >
-                <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
+                <Fingerprint className="w-4 h-4 text-teal-400" />
                 <div className="text-left hidden sm:block">
-                  <p className="text-sm font-medium text-white leading-tight">{currentAccount.name}</p>
+                  <p className="text-sm font-bold text-white leading-tight">{currentAccount.name}</p>
                 </div>
-                <ChevronDown className="w-4 h-4 text-[#a1a1aa] ml-1 group-hover:text-white transition-colors" />
+                <ChevronDown className="w-4 h-4 text-slate-400 ml-1 group-hover:text-white transition-colors" />
               </button>
 
               <AnimatePresence>
                 {showWalletDropdown && (
                   <motion.div 
-                    initial={{ opacity: 0, y: 5, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 5, scale: 0.98 }} transition={{ duration: 0.15 }}
-                    className="absolute right-0 mt-2 w-64 bg-[#111] rounded-xl shadow-2xl overflow-hidden z-50 border border-white/[0.08]"
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 10, scale: 0.95 }} transition={{ duration: 0.15 }}
+                    className="absolute right-0 mt-3 w-64 glass overflow-hidden z-50 border-white/10"
                   >
-                    <div className="px-4 py-3 border-b border-white/[0.08] bg-black/40">
-                      <p className="text-xs font-semibold text-[#a1a1aa] uppercase tracking-wider">Select Identity</p>
+                    <div className="px-5 py-3 border-b border-white/5 bg-slate-900/50">
+                      <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Select Identity</p>
                     </div>
-                    <div className="p-1.5 space-y-0.5">
+                    <div className="p-2 space-y-1">
                       {ACCOUNTS.map((acc, idx) => (
                         <button
                           key={idx}
                           onClick={() => { setCurrentAccountIndex(idx); setShowWalletDropdown(false); }}
-                          className={`w-full text-left px-3 py-2.5 rounded-lg flex items-center justify-between transition-colors ${currentAccountIndex === idx ? 'bg-white/[0.08] text-white' : 'hover:bg-white/[0.04] text-[#a1a1aa]'}`}
+                          className={`w-full text-left px-4 py-3 rounded-xl flex items-center justify-between transition-all ${currentAccountIndex === idx ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30' : 'hover:bg-white/5 text-slate-300 border border-transparent'}`}
                         >
                           <div>
-                            <p className="text-sm font-medium">{acc.name}</p>
+                            <p className="text-sm font-bold">{acc.name}</p>
                             <p className="text-xs opacity-60 font-mono mt-0.5">{acc.address.substring(0,6)}...{acc.address.substring(38)}</p>
                           </div>
-                          {currentAccountIndex === idx && <CheckCircle2 className="w-4 h-4 text-white" />}
+                          {currentAccountIndex === idx && <CheckCircle2 className="w-5 h-5 text-indigo-400" />}
                         </button>
                       ))}
                     </div>
@@ -204,70 +209,70 @@ function App() {
         </div>
       </header>
 
-      {/* Elegant Team & Docs Modal */}
+      {/* Docs Modal */}
       <AnimatePresence>
         {showDocsModal && (
           <motion.div 
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xl"
           >
             <motion.div 
-              initial={{ scale: 0.98, y: 10, opacity: 0 }} animate={{ scale: 1, y: 0, opacity: 1 }} exit={{ scale: 0.98, y: 10, opacity: 0 }}
-              className="bg-[#111] border border-white/[0.08] rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto relative"
+              initial={{ scale: 0.95, y: 20, opacity: 0 }} animate={{ scale: 1, y: 0, opacity: 1 }} exit={{ scale: 0.95, y: 20, opacity: 0 }}
+              className="glass max-w-4xl w-full max-h-[90vh] overflow-y-auto relative"
             >
               <button 
                 onClick={() => setShowDocsModal(false)}
-                className="absolute top-5 right-5 text-[#a1a1aa] hover:text-white p-2 rounded-lg hover:bg-white/[0.05] transition-colors z-10"
+                className="absolute top-6 right-6 text-slate-400 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors z-10"
               >
-                <X className="w-5 h-5" />
+                <X className="w-6 h-6" />
               </button>
               
               <div className="p-8 sm:p-12">
                 <div className="text-center mb-12">
-                  <h2 className="text-3xl font-semibold text-white mb-3">NexusDAO Ecosystem</h2>
-                  <p className="text-[#a1a1aa] text-lg">A robust implementation of decentralized governance.</p>
+                  <h2 className="text-4xl font-bold text-white mb-4 text-gradient">NexusDAO Ecosystem</h2>
+                  <p className="text-slate-400 text-lg">A robust implementation of decentralized governance.</p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
-                  <div className="bg-black/50 border border-white/[0.05] p-8 rounded-2xl">
-                    <BookOpen className="w-8 h-8 text-white mb-5 opacity-80" />
-                    <h3 className="text-lg font-semibold text-white mb-3">How it Works</h3>
-                    <ul className="space-y-3 text-[#a1a1aa] text-sm">
-                      <li className="flex items-start gap-2"><span className="text-white mt-0.5">•</span><span><strong>Create:</strong> Submit on-chain proposals transparently.</span></li>
-                      <li className="flex items-start gap-2"><span className="text-white mt-0.5">•</span><span><strong>Vote:</strong> Support or reject proposals (1 vote per wallet identity).</span></li>
-                      <li className="flex items-start gap-2"><span className="text-white mt-0.5">•</span><span><strong>Delete:</strong> Permanently erase data from EVM storage.</span></li>
+                  <div className="glass-input p-8">
+                    <BookOpen className="w-8 h-8 text-indigo-400 mb-5" />
+                    <h3 className="text-xl font-bold text-white mb-3">How it Works</h3>
+                    <ul className="space-y-3 text-slate-300 text-sm">
+                      <li className="flex items-start gap-3"><div className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-1.5 shrink-0"></div><span><strong>Create:</strong> Submit on-chain proposals transparently.</span></li>
+                      <li className="flex items-start gap-3"><div className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-1.5 shrink-0"></div><span><strong>Vote:</strong> Support or reject proposals (1 vote per wallet identity).</span></li>
+                      <li className="flex items-start gap-3"><div className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-1.5 shrink-0"></div><span><strong>Delete:</strong> Permanently erase data from EVM storage.</span></li>
                     </ul>
                   </div>
-                  <div className="bg-black/50 border border-white/[0.05] p-8 rounded-2xl">
-                    <Code className="w-8 h-8 text-white mb-5 opacity-80" />
-                    <h3 className="text-lg font-semibold text-white mb-3">Technical Stack</h3>
-                    <ul className="space-y-3 text-[#a1a1aa] text-sm">
-                      <li className="flex items-start gap-2"><span className="text-white mt-0.5">•</span><span><strong>Smart Contract:</strong> Solidity & Foundry.</span></li>
-                      <li className="flex items-start gap-2"><span className="text-white mt-0.5">•</span><span><strong>Frontend:</strong> React, TypeScript, Vite.</span></li>
-                      <li className="flex items-start gap-2"><span className="text-white mt-0.5">•</span><span><strong>Integration:</strong> Ethers.js via Local RPC.</span></li>
+                  <div className="glass-input p-8">
+                    <Code className="w-8 h-8 text-teal-400 mb-5" />
+                    <h3 className="text-xl font-bold text-white mb-3">Technical Stack</h3>
+                    <ul className="space-y-3 text-slate-300 text-sm">
+                      <li className="flex items-start gap-3"><div className="w-1.5 h-1.5 rounded-full bg-teal-500 mt-1.5 shrink-0"></div><span><strong>Smart Contract:</strong> Solidity & Foundry (Anvil).</span></li>
+                      <li className="flex items-start gap-3"><div className="w-1.5 h-1.5 rounded-full bg-teal-500 mt-1.5 shrink-0"></div><span><strong>Frontend:</strong> React, TypeScript, Vite.</span></li>
+                      <li className="flex items-start gap-3"><div className="w-1.5 h-1.5 rounded-full bg-teal-500 mt-1.5 shrink-0"></div><span><strong>Integration:</strong> Ethers.js via Local RPC.</span></li>
                     </ul>
                   </div>
                 </div>
 
-                <div className="border-t border-white/[0.08] pt-10">
-                  <h3 className="text-sm font-semibold text-white mb-6 text-center">The Engineering Team</h3>
-                  <div className="flex flex-col sm:flex-row justify-center gap-6">
-                    <div className="bg-black/50 border border-white/[0.05] p-4 rounded-2xl w-full sm:w-64 flex flex-col items-center">
-                      <div className="w-24 h-24 rounded-full overflow-hidden mb-4 border border-white/[0.1]">
-                        <img src="/Marchell.jpg" alt="Marchell" className="object-cover w-full h-full grayscale hover:grayscale-0 transition-all duration-300" />
+                <div className="pt-6 border-t border-white/10">
+                  <h3 className="text-sm font-bold text-slate-500 mb-8 text-center uppercase tracking-widest">The Engineering Team</h3>
+                  <div className="flex flex-col sm:flex-row justify-center gap-8">
+                    <div className="glass-input p-6 w-full sm:w-64 flex flex-col items-center group">
+                      <div className="w-28 h-28 rounded-full overflow-hidden mb-5 border-4 border-white/5 group-hover:border-indigo-400/50 transition-colors">
+                        <img src="/Marchell.jpg" alt="Marchell" className="object-cover w-full h-full opacity-80 group-hover:opacity-100 transition-opacity" />
                       </div>
-                      <h4 className="text-base font-semibold text-white">Marchell Adi P.</h4>
-                      <p className="text-xs text-[#a1a1aa] font-mono mt-1 mb-3">672023081</p>
-                      <p className="text-xs text-center text-[#71717a]">Lead Blockchain Engineer & UI/UX Architect.</p>
+                      <h4 className="text-lg font-bold text-white">Marchell Adi P.</h4>
+                      <p className="text-xs text-indigo-300 font-bold mt-1 mb-3 bg-indigo-500/20 px-3 py-1 rounded-full border border-indigo-500/30">672023081</p>
+                      <p className="text-sm text-center text-slate-400">Lead Blockchain Engineer & UI/UX Architect.</p>
                     </div>
 
-                    <div className="bg-black/50 border border-white/[0.05] p-4 rounded-2xl w-full sm:w-64 flex flex-col items-center">
-                      <div className="w-24 h-24 rounded-full overflow-hidden mb-4 border border-white/[0.1]">
-                        <img src="/Nova.png" alt="Nova" className="object-cover w-full h-full grayscale hover:grayscale-0 transition-all duration-300" />
+                    <div className="glass-input p-6 w-full sm:w-64 flex flex-col items-center group">
+                      <div className="w-28 h-28 rounded-full overflow-hidden mb-5 border-4 border-white/5 group-hover:border-teal-400/50 transition-colors">
+                        <img src="/Nova.png" alt="Nova" className="object-cover w-full h-full opacity-80 group-hover:opacity-100 transition-opacity" />
                       </div>
-                      <h4 className="text-base font-semibold text-white">Nova Hendriyawan</h4>
-                      <p className="text-xs text-[#a1a1aa] font-mono mt-1 mb-3">672023113</p>
-                      <p className="text-xs text-center text-[#71717a]">Smart Contract QA & Research Analyst.</p>
+                      <h4 className="text-lg font-bold text-white">Nova Hendriyawan</h4>
+                      <p className="text-xs text-teal-300 font-bold mt-1 mb-3 bg-teal-500/20 px-3 py-1 rounded-full border border-teal-500/30">672023113</p>
+                      <p className="text-sm text-center text-slate-400">Smart Contract QA & Research Analyst.</p>
                     </div>
                   </div>
                 </div>
@@ -277,35 +282,36 @@ function App() {
         )}
       </AnimatePresence>
 
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 mt-10 mb-20">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 mt-12 mb-20 relative z-10">
         
-        {/* Minimal Toast Notifications */}
+        {/* Toast Notifications */}
         <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3 w-full max-w-sm px-4 sm:px-0 pointer-events-none">
           <AnimatePresence>
             {error && (
               <motion.div 
                 initial={{ opacity: 0, y: 20, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-                className="bg-[#111] border border-rose-500/30 text-white p-4 rounded-xl shadow-xl flex items-start gap-3 pointer-events-auto"
+                className="glass border-l-4 border-rose-500 text-white p-5 flex items-start gap-4 pointer-events-auto shadow-[0_10px_30px_rgba(244,63,94,0.2)]"
               >
-                <AlertCircle className="w-5 h-5 flex-shrink-0 text-rose-500" />
+                <AlertCircle className="w-6 h-6 flex-shrink-0 text-rose-500" />
                 <div className="flex-1">
-                  <p className="text-sm font-medium">{error}</p>
+                  <p className="text-sm font-bold">Transaction Failed</p>
+                  <p className="text-xs mt-1 text-slate-300">{error}</p>
                 </div>
-                <button onClick={() => setError(null)} className="text-[#a1a1aa] hover:text-white">&times;</button>
+                <button onClick={() => setError(null)} className="text-slate-400 hover:text-white">&times;</button>
               </motion.div>
             )}
             
             {txHash && (
               <motion.div 
                 initial={{ opacity: 0, y: 20, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-                className="bg-[#111] border border-emerald-500/30 text-white p-4 rounded-xl shadow-xl flex items-start gap-3 pointer-events-auto"
+                className="glass border-l-4 border-teal-500 text-white p-5 flex items-start gap-4 pointer-events-auto shadow-[0_10px_30px_rgba(20,184,166,0.2)]"
               >
-                <CheckCircle2 className="w-5 h-5 flex-shrink-0 text-emerald-500" />
+                <CheckCircle2 className="w-6 h-6 flex-shrink-0 text-teal-400" />
                 <div className="flex-1">
-                  <p className="text-sm font-medium">Transaction Confirmed</p>
-                  <p className="text-xs text-[#a1a1aa] font-mono mt-1">Tx: {txHash.substring(0,16)}...</p>
+                  <p className="text-sm font-bold">Transaction Confirmed</p>
+                  <p className="text-xs text-slate-400 font-mono mt-1">Tx: {txHash.substring(0,16)}...</p>
                 </div>
-                <button onClick={() => setTxHash(null)} className="text-[#a1a1aa] hover:text-white">&times;</button>
+                <button onClick={() => setTxHash(null)} className="text-slate-400 hover:text-white">&times;</button>
               </motion.div>
             )}
           </AnimatePresence>
@@ -315,26 +321,26 @@ function App() {
           
           {/* Main Board - Proposals */}
           <div className="lg:col-span-8 space-y-6">
-            <div className="flex items-center justify-between pb-4 border-b border-white/[0.08]">
-              <h2 className="text-xl font-semibold flex items-center gap-2 text-white">
-                <LayoutDashboard className="w-5 h-5 text-[#a1a1aa]" />
+            <div className="flex items-center justify-between pb-4">
+              <h2 className="text-3xl font-bold flex items-center gap-3 text-white">
+                <LayoutDashboard className="w-8 h-8 text-indigo-400 drop-shadow-[0_0_15px_rgba(99,102,241,0.5)]" />
                 Active Proposals
               </h2>
-              <span className="text-xs font-medium bg-white/[0.05] border border-white/[0.08] text-[#a1a1aa] px-3 py-1 rounded-full">
+              <span className="text-sm font-bold bg-white/10 border border-white/10 text-white px-4 py-2 rounded-full backdrop-blur-md">
                 {proposals.length} Total
               </span>
             </div>
             
             {proposals.length === 0 ? (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="border border-dashed border-white/[0.1] rounded-2xl p-16 text-center">
-                <div className="w-16 h-16 bg-white/[0.02] border border-white/[0.05] rounded-full flex items-center justify-center mx-auto mb-4">
-                  <LayoutDashboard className="w-6 h-6 text-[#71717a]" />
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="glass border-dashed p-16 text-center">
+                <div className="w-20 h-20 bg-white/5 border border-white/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <LayoutDashboard className="w-8 h-8 text-slate-400" />
                 </div>
-                <h3 className="text-base font-semibold text-white">No active proposals</h3>
-                <p className="text-[#71717a] mt-1 text-sm">The governance board is waiting for a new initiative.</p>
+                <h3 className="text-2xl font-bold text-white">No active proposals</h3>
+                <p className="text-slate-400 mt-2 font-medium">The governance board is waiting for a new initiative.</p>
               </motion.div>
             ) : (
-              <div className="space-y-4">
+              <div className="space-y-6">
                 <AnimatePresence>
                   {proposals.map((p, index) => {
                     const total = p.votesFor + p.votesAgainst;
@@ -344,75 +350,75 @@ function App() {
                     return (
                       <motion.div
                         key={p.id}
-                        initial={{ opacity: 0, y: 10 }}
+                        initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.98 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
                         transition={{ delay: index * 0.05 }}
-                        className="bg-[#111] border border-white/[0.08] rounded-2xl p-6 transition-colors hover:bg-[#141414]"
+                        className="glass p-8 sm:p-10 group"
                       >
-                        <div className="flex justify-between items-start mb-4">
+                        <div className="flex justify-between items-start mb-6">
                           <div>
-                            <div className="flex items-center gap-2 mb-2">
-                              <span className="text-[10px] font-medium text-[#a1a1aa] bg-white/[0.05] px-2 py-0.5 rounded-md">
+                            <div className="flex items-center gap-3 mb-4">
+                              <span className="text-[11px] font-bold text-indigo-200 bg-indigo-500/20 px-3 py-1.5 rounded-lg border border-indigo-500/30">
                                 PROP-{p.id}
                               </span>
-                              <span className={`text-[10px] font-medium px-2 py-0.5 rounded-md ${p.active ? 'bg-emerald-500/10 text-emerald-500' : 'bg-white/[0.05] text-[#71717a]'}`}>
+                              <span className={`text-[11px] font-bold px-3 py-1.5 rounded-lg border ${p.active ? 'bg-teal-500/20 text-teal-300 border-teal-500/30' : 'bg-white/5 text-slate-400 border-white/10'}`}>
                                 {p.active ? 'Active' : 'Closed'}
                               </span>
                             </div>
-                            <h3 className="text-xl font-semibold text-white">{p.title}</h3>
+                            <h3 className="text-3xl font-bold text-white">{p.title}</h3>
                           </div>
                           
                           {/* Delete Button */}
                           <button 
                             onClick={() => handleDelete(p.id)}
                             disabled={loading}
-                            className="text-[#71717a] hover:text-rose-500 p-2 rounded-lg hover:bg-rose-500/10 transition-colors"
+                            className="text-slate-400 hover:text-rose-400 p-3 rounded-xl hover:bg-rose-500/10 transition-colors border border-transparent hover:border-rose-500/20"
                             title="Delete Proposal"
                           >
-                            <Trash2 className="w-4 h-4" />
+                            <Trash2 className="w-5 h-5" />
                           </button>
                         </div>
                         
-                        <div className="mb-6">
-                          <p className="text-[#a1a1aa] text-sm leading-relaxed">
+                        <div className="mb-8">
+                          <p className="text-slate-300 text-base leading-relaxed font-medium glass-input p-6 border-none">
                             {p.description}
                           </p>
                         </div>
                         
-                        {/* Voting Stats Minimal */}
-                        <div className="mb-6">
-                          <div className="flex justify-between text-xs font-medium mb-2 text-[#a1a1aa]">
-                            <span>{p.votesFor} For ({forPercent}%)</span>
-                            <span>{p.votesAgainst} Against ({againstPercent}%)</span>
+                        {/* Voting Stats */}
+                        <div className="mb-8">
+                          <div className="flex justify-between text-sm font-bold mb-3">
+                            <span className="text-teal-400">{p.votesFor} For ({forPercent}%)</span>
+                            <span className="text-purple-400">{p.votesAgainst} Against ({againstPercent}%)</span>
                           </div>
-                          <div className="w-full h-1.5 bg-black rounded-full overflow-hidden flex">
+                          <div className="w-full h-3 glass-input border-none rounded-full overflow-hidden flex p-0.5">
                             <motion.div 
-                              initial={{ width: 0 }} animate={{ width: `${forPercent}%` }} transition={{ duration: 1 }}
-                              className="h-full bg-white"
+                              initial={{ width: 0 }} animate={{ width: `${forPercent}%` }} transition={{ duration: 1, ease: "easeOut" }}
+                              className="h-full bg-gradient-to-r from-teal-500 to-emerald-400 rounded-full"
                             ></motion.div>
                             <motion.div 
-                              initial={{ width: 0 }} animate={{ width: `${againstPercent}%` }} transition={{ duration: 1 }}
-                              className="h-full bg-[#333]"
+                              initial={{ width: 0 }} animate={{ width: `${againstPercent}%` }} transition={{ duration: 1, ease: "easeOut" }}
+                              className="h-full bg-gradient-to-r from-purple-500 to-rose-400 rounded-full ml-1"
                             ></motion.div>
                           </div>
                         </div>
 
                         {/* Actions */}
-                        <div className="flex gap-3">
+                        <div className="flex gap-4">
                           <button
                             onClick={() => handleVote(p.id, true)}
                             disabled={loading || !p.active}
-                            className="flex-1 flex items-center justify-center gap-2 bg-white text-black hover:bg-gray-200 font-medium py-2.5 rounded-xl text-sm transition-colors disabled:opacity-50 disabled:bg-white/[0.1] disabled:text-[#a1a1aa]"
+                            className="flex-1 flex items-center justify-center gap-2 bg-teal-500/10 border border-teal-500/30 text-teal-300 hover:bg-teal-500/20 hover:border-teal-400/50 font-bold py-4 rounded-xl transition-all disabled:opacity-30"
                           >
-                            <ThumbsUp className="w-4 h-4" /> Support
+                            <ThumbsUp className="w-5 h-5" /> Support
                           </button>
                           <button
                             onClick={() => handleVote(p.id, false)}
                             disabled={loading || !p.active}
-                            className="flex-1 flex items-center justify-center gap-2 bg-black border border-white/[0.1] text-white hover:bg-white/[0.05] font-medium py-2.5 rounded-xl text-sm transition-colors disabled:opacity-50"
+                            className="flex-1 flex items-center justify-center gap-2 bg-purple-500/10 border border-purple-500/30 text-purple-300 hover:bg-purple-500/20 hover:border-purple-400/50 font-bold py-4 rounded-xl transition-all disabled:opacity-30"
                           >
-                            <ThumbsDown className="w-4 h-4" /> Reject
+                            <ThumbsDown className="w-5 h-5" /> Reject
                           </button>
                         </div>
                       </motion.div>
@@ -423,18 +429,22 @@ function App() {
             )}
           </div>
 
-          {/* Admin / Creation Panel Minimal */}
+          {/* Admin / Creation Panel */}
           <div className="lg:col-span-4">
-            <div className="sticky top-24">
-              <div className="bg-[#111] border border-white/[0.08] rounded-2xl p-6">
-                <h2 className="text-lg font-semibold flex items-center gap-2 text-white mb-6">
-                  <PlusCircle className="w-5 h-5 text-[#a1a1aa]" />
+            <div className="sticky top-28">
+              <div className="glass p-8 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/20 rounded-full blur-3xl"></div>
+                
+                <h2 className="text-2xl font-bold flex items-center gap-3 text-white mb-8 relative z-10">
+                  <div className="bg-indigo-500/20 p-2.5 rounded-xl text-indigo-400 border border-indigo-500/30">
+                    <PlusCircle className="w-6 h-6" />
+                  </div>
                   Draft Proposal
                 </h2>
                 
-                <form onSubmit={handleCreate} className="space-y-5">
+                <form onSubmit={handleCreate} className="space-y-6 relative z-10">
                   <div>
-                    <label className="block text-xs font-medium text-[#a1a1aa] mb-2">
+                    <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-widest">
                       Proposal Title
                     </label>
                     <input
@@ -442,20 +452,20 @@ function App() {
                       value={newTitle}
                       onChange={(e) => setNewTitle(e.target.value)}
                       disabled={loading}
-                      className="w-full bg-black border border-white/[0.1] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-white transition-colors text-white placeholder:text-[#52525b]"
+                      className="glass-input w-full px-5 py-4 text-white placeholder:text-slate-500 font-medium"
                       placeholder="e.g. Upgrade Security Protocol"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-[#a1a1aa] mb-2">
+                    <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-widest">
                       Justification
                     </label>
                     <textarea
                       value={newDesc}
                       onChange={(e) => setNewDesc(e.target.value)}
                       disabled={loading}
-                      rows={4}
-                      className="w-full bg-black border border-white/[0.1] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-white transition-colors text-white placeholder:text-[#52525b] resize-none"
+                      rows={5}
+                      className="glass-input w-full px-5 py-4 text-white placeholder:text-slate-500 font-medium resize-none"
                       placeholder="Explain why the DAO should support this..."
                     />
                   </div>
@@ -463,10 +473,10 @@ function App() {
                   <button
                     type="submit"
                     disabled={loading || !newTitle.trim() || !newDesc.trim()}
-                    className="w-full bg-white text-black hover:bg-gray-200 font-medium py-3 rounded-xl text-sm transition-colors disabled:opacity-50 disabled:bg-white/[0.1] disabled:text-[#a1a1aa]"
+                    className="w-full bg-gradient-to-r from-indigo-500 to-teal-400 text-white hover:opacity-90 font-bold py-4 rounded-xl transition-all disabled:opacity-50 disabled:grayscale shadow-[0_0_20px_rgba(99,102,241,0.3)] flex justify-center items-center h-14"
                   >
                     {loading ? (
-                      <span className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin mx-auto block"></span>
+                      <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
                     ) : (
                       <>Submit to Network</>
                     )}

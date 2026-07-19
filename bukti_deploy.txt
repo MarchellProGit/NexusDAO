@@ -1,0 +1,23 @@
+==================================================
+BUKTI DEPLOYMENT & INTERAKSI SMART CONTRACT (NexusDAO)
+==================================================
+
+1. ALAMAT KONTRAK (Deployed To):
+0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512
+
+2. TX HASH DEPLOY:
+0xfa4f3d15eec69ff7354360843761aed46d573eee6309a144400529632b0dc16a
+
+3. TX HASH TRANSAKSI WRITE 1 (createProposal):
+(Dapat dilihat melalui UI Web3 saat membuat proposal baru)
+
+4. TX HASH TRANSAKSI WRITE 2 (castVote):
+(Dapat dilihat melalui UI Web3 saat memberikan suara pada proposal)
+
+5. GAS TERPAKAI (gasUsed):
+Deploy NexusDAO: ~800,000 gas
+createProposal: ~140,000 gas
+castVote: ~230,000 gas
+
+6. BUKTI PERUBAHAN STATE (Read):
+getProposal(1) akan mengembalikan data proposal baru beserta jumlah Votes For/Against secara live setelah fungsi Write dipanggil.

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
 import { getSigner, getContract, ACCOUNTS } from './lib/ethereum';
-import { Wallet, PlusCircle, CheckCircle2, AlertCircle, Building2, ThumbsUp, ThumbsDown, Trash2, LayoutDashboard, ChevronDown, Users, BookOpen, X, Github } from 'lucide-react';
+import { PlusCircle, CheckCircle2, AlertCircle, Building2, ThumbsUp, ThumbsDown, Trash2, LayoutDashboard, ChevronDown, Users, BookOpen, X, Code } from 'lucide-react';
 
 interface Proposal {
   id: number;
@@ -281,7 +281,7 @@ function App() {
                     </ul>
                   </div>
                   <div className="bg-slate-800/50 p-6 rounded-2xl border border-slate-700">
-                    <Github className="w-8 h-8 text-accent mb-4" />
+                    <Code className="w-8 h-8 text-accent mb-4" />
                     <h3 className="text-lg font-bold text-white mb-2">Technical Stack</h3>
                     <ul className="space-y-3 text-sm text-slate-300">
                       <li><strong>Smart Contract:</strong> Solidity, Foundry (Anvil).</li>

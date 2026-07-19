@@ -16,8 +16,9 @@ contract NexusDAOTest is Test {
     function testCreateProposal() public {
         dao.createProposal("Fund Project X", "We need 10 ETH for marketing");
         assertEq(dao.proposalCount(), 1);
-        
-        (uint256 id, string memory title, string memory desc, uint256 forVotes, uint256 againstVotes, bool active) = dao.getProposal(1);
+
+        (uint256 id, string memory title, string memory desc, uint256 forVotes, uint256 againstVotes, bool active) =
+            dao.getProposal(1);
         assertEq(id, 1);
         assertEq(title, "Fund Project X");
         assertEq(desc, "We need 10 ETH for marketing");
@@ -28,20 +29,20 @@ contract NexusDAOTest is Test {
 
     function testCastVote() public {
         dao.createProposal("Proposal 1", "Description");
-        
+
         vm.prank(user1);
         dao.castVote(1, true); // Vote FOR
 
         vm.prank(user2);
         dao.castVote(1, false); // Vote AGAINST
 
-        (,,,, uint256 againstVotes, ) = dao.getProposal(1);
+        (,,,, uint256 againstVotes,) = dao.getProposal(1);
         assertEq(againstVotes, 1);
     }
 
     function testCannotVoteTwice() public {
         dao.createProposal("Proposal 1", "Description");
-        
+
         vm.prank(user1);
         dao.castVote(1, true);
 
@@ -53,7 +54,7 @@ contract NexusDAOTest is Test {
     function testCloseProposal() public {
         dao.createProposal("Proposal 1", "Description");
         dao.closeProposal(1);
-        
+
         vm.expectRevert("Proposal is closed");
         vm.prank(user1);
         dao.castVote(1, true);
@@ -62,7 +63,7 @@ contract NexusDAOTest is Test {
     function testDeleteProposal() public {
         dao.createProposal("Proposal to delete", "desc");
         dao.deleteProposal(1);
-        
+
         (uint256 id, string memory title,,,,) = dao.getProposal(1);
         assertEq(bytes(title).length, 0); // Deleted struct strings default to empty
         assertEq(id, 0); // uints default to 0

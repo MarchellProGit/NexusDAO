@@ -11,6 +11,15 @@
   .glass {
     @apply bg-slate-900/60 backdrop-blur-2xl border border-slate-700/50 shadow-2xl;
   }
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+  .backface-hidden {
+    backface-visibility: hidden;
+  }
 }
 
 body {
@@ -21,6 +30,21 @@ body {
   background-color: #0b1120;
   color: #f8fafc; /* Slate 50 */
   overflow-x: hidden;
+}
+
+/* Custom Scrollbar for elegant look */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0b1120;
+}
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
 }
 
 /* Background Animated Glows */

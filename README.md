@@ -1,63 +1,65 @@
+# NexusDAO (Enterprise Web3 Governance)
+
+**NexusDAO** adalah platform tata kelola terdesentralisasi (*Decentralized Autonomous Organization*) berbasis Ethereum. Proyek ini dibangun untuk Tugas Rancang dengan mengusung standar *production-grade*, 100% Full CRUD Smart Contract, dan antarmuka *God-Tier 3D Glassmorphism*.
+
 <div align="center">
-  <img src="https://img.shields.io/badge/Ethereum-3C3C3D?style=for-the-badge&logo=Ethereum&logoColor=white" alt="Ethereum" />
   <img src="https://img.shields.io/badge/Solidity-%23363636.svg?style=for-the-badge&logo=solidity&logoColor=white" alt="Solidity" />
-  <img src="https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB" alt="React" />
-  <img src="https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="TailwindCSS" />
-  
-  <br />
-  
-  <h1>🌌 NexusDAO</h1>
-  <p><strong>A Premium Decentralized Governance Platform (E-Voting) built on Ethereum.</strong></p>
+  <img src="https://img.shields.io/badge/React-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB" alt="React" />
+  <img src="https://img.shields.io/badge/Foundry-%23FF5E00.svg?style=for-the-badge" alt="Foundry" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind" />
+  <img src="https://img.shields.io/badge/Framer_Motion-%230055FF.svg?style=for-the-badge&logo=framer&logoColor=white" alt="Framer Motion" />
 </div>
 
 ---
 
-## 📌 Deskripsi Proyek
-**NexusDAO** adalah aplikasi *Decentralized Autonomous Organization* (DAO) berbasis Ethereum yang memungkinkan komunitas untuk membuat proposal dan melakukan *voting* (Upvote/Downvote) secara transparan, *immutable*, dan terdesentralisasi. Dibangun dengan antarmuka **Premium Dark Mode Glassmorphism**, proyek ini merupakan *upgrade* komprehensif dari sistem E-Voting tradisional, menjadikannya siap untuk standar industri *Web3*.
+## 🔥 Fitur Utama (God-Tier Edition)
 
-Proyek ini disusun khusus untuk memenuhi (dan melampaui) standar Tugas Rancang mata kuliah **Teknologi Blockchain**.
+1. **100% Full CRUD Smart Contract**
+   *   **Create**: `createProposal` (Mendaftarkan proposal baru ke blockchain).
+   *   **Read**: `getProposal` (Membaca data live dari jaringan).
+   *   **Update**: `castVote`, `closeProposal` (Mengubah status dan jumlah suara).
+   *   **Delete**: `deleteProposal` (Menghapus total data dari EVM *Storage*).
 
-### ✨ Fitur Utama
-- **CRUD Smart Contract**: Fitur Create Proposal, Cast Vote, Close Proposal, dan Read State.
-- **Real-Time Blockchain Sync**: Menggunakan `Ethers.js` Event Listeners (`ProposalCreated`, `Voted`) untuk update UI tanpa *refresh* halaman.
-- **Premium UI/UX**: Desain *Dark Mode*, animasi *Framer Motion*, dan notifikasi *Toast* yang terintegrasi.
-- **100% On-Chain**: Seluruh data tersimpan mutlak di jaringan Ethereum lokal (Anvil).
+2. **Web3 Wallet Switcher**
+   *   Simulasi *multi-user* bawaan! Mendemonstrasikan bahwa *smart contract* memiliki keamanan berbasis identitas (`msg.sender`). Satu dompet hanya bisa *vote* satu kali.
+
+3. **3D Glassmorphism UI & Framer Motion**
+   *   *Card Tilt Effect*: Kartu proposal bereaksi secara 3D terhadap pergerakan kursor (*hover*).
+   *   *Animated Glowing Orbs*: Latar belakang dinamis menggunakan CSS Murni.
+   *   *Real-time Sync*: Menggunakan `Ethers.js` *Event Listeners* untuk sinkronisasi otomatis tanpa perlu memuat ulang halaman (*No Refresh*).
+
+## 👨‍💻 Engineering Team
+
+- **Marchell Adi Pratama** (672023081) - Lead Blockchain Engineer & UI/UX Architect.
+- **Nova Hendriyawan Putra** (672023113) - Smart Contract QA & Research Analyst.
+
+*(Buka aplikasi dan klik tombol "Team & Docs" di header untuk melihat profil hologram 3D kami!)*
 
 ---
 
-## 👨‍💻 Identitas Tim
-- **Nama**: Marchell Adi Pratama
-- **NIM**: 672023081
+## 🛠 Panduan Instalasi (Lokal)
 
----
-
-## 🚀 Panduan Setup & Instalasi (Local Development)
-
-Aplikasi NexusDAO berjalan di atas node lokal Anvil dengan RPC `http://127.0.0.1:8545`.
-
-### 1. Jalankan Blockchain Node (Anvil)
-Buka terminal WSL (Ubuntu) dan jalankan:
+### 1. Jalankan Blockchain Lokal (WSL / Terminal 1)
 ```bash
+cd ~/my-dapp
 anvil
 ```
 
-### 2. Deploy Smart Contract
-Buka terminal WSL baru, arahkan ke root direktori proyek, lalu eksekusi *deployment* kontrak `NexusDAO`:
+### 2. Deploy Smart Contract (WSL / Terminal 2)
 ```bash
+cd ~/my-dapp
 forge create src/NexusDAO.sol:NexusDAO --rpc-url http://127.0.0.1:8545 --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 --broadcast
 ```
+*Salin alamat kontrak (Deployed to: 0x...) yang muncul.*
 
-### 3. Menjalankan Frontend Web (React)
-Jika Anda menggunakan Windows, sangat disarankan menjalankan ini via **PowerShell / CMD Windows** (bukan WSL) untuk menghindari *error mapping network*:
-```bash
-cd app
-npm install
+### 3. Konfigurasi Frontend (Windows / Terminal 3)
+*   Buka file `app/src/lib/ethereum.ts`.
+*   Ubah nilai `CONTRACT_ADDRESS` dengan alamat kontrak yang baru saja di-*deploy*.
+*   Jalankan server pengembangan:
+```powershell
+cd C:\Users\HP VICTUS 15\Desktop\Study\SEMESTER 9\BLOCKCHAIN\TR\app
 npm run dev
 ```
-Akses `http://localhost:5173/` (atau port yang tertera) melalui browser. Aplikasi sudah terintegrasi langsung dengan RPC lokal dan akun Anvil pertama (`0xac09...`), sehingga **TIDAK** membutuhkan MetaMask.
 
----
-
-## 📄 Alamat Kontrak & Hash Transaksi
-Silakan merujuk ke file `bukti_deploy.txt` untuk verifikasi *Transaction Hash*, alamat *deployer*, gas terpakai, dan interaksi *state* untuk laporan Tugas Rancang.
- 
+### 4. Buka Aplikasi
+Akses `http://localhost:5174/` di browser kamu. Klik tombol **"Team & Docs"** untuk mulai mencoba!

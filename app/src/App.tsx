@@ -18,6 +18,7 @@ function App() {
   const [newDesc, setNewDesc] = useState('');
   const [loading, setLoading] = useState(false);
   const [txHash, setTxHash] = useState<string | null>(null);
+  const [gasUsed, setGasUsed] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   
   // Modals & Dropdowns State
@@ -85,12 +86,14 @@ function App() {
     setLoading(true);
     setError(null);
     setTxHash(null);
+    setGasUsed(null);
     try {
       const signer = getSigner(currentAccount.key);
       const contract = getContract(signer);
       const tx = await contract.createProposal(newTitle, newDesc);
       setTxHash(tx.hash);
-      await tx.wait();
+      const receipt = await tx.wait();
+      if(receipt && receipt.gasUsed) { setGasUsed(receipt.gasUsed.toString()); }
       setNewTitle('');
       setNewDesc('');
       loadData();
@@ -104,12 +107,14 @@ function App() {
     setLoading(true);
     setError(null);
     setTxHash(null);
+    setGasUsed(null);
     try {
       const signer = getSigner(currentAccount.key);
       const contract = getContract(signer);
       const tx = await contract.castVote(id, support);
       setTxHash(tx.hash);
-      await tx.wait();
+      const receipt = await tx.wait();
+      if(receipt && receipt.gasUsed) { setGasUsed(receipt.gasUsed.toString()); }
       loadData();
     } catch (err: any) {
       setError(err.reason || "Voting failed. You might have already voted from this account.");
@@ -123,12 +128,14 @@ function App() {
     setLoading(true);
     setError(null);
     setTxHash(null);
+    setGasUsed(null);
     try {
       const signer = getSigner(currentAccount.key);
       const contract = getContract(signer);
       const tx = await contract.deleteProposal(id);
       setTxHash(tx.hash);
-      await tx.wait();
+      const receipt = await tx.wait();
+      if(receipt && receipt.gasUsed) { setGasUsed(receipt.gasUsed.toString()); }
       loadData();
     } catch (err: any) {
       setError(err.reason || "Deletion failed.");
@@ -259,11 +266,11 @@ function App() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
                       <div className="bg-slate-900/50 p-4 rounded-xl border border-white/5">
                         <p className="text-xs text-slate-400 uppercase tracking-widest font-bold mb-1">Contract Address</p>
-                        <p className="text-sm font-mono text-teal-300 break-all">0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9</p>
+                        <p className="text-sm font-mono text-teal-300 break-all">0x5FbDB2315678afecb367f032d93F642f64180aa3</p>
                       </div>
                       <div className="bg-slate-900/50 p-4 rounded-xl border border-white/5">
                         <p className="text-xs text-slate-400 uppercase tracking-widest font-bold mb-1">Deployment Tx Hash</p>
-                        <p className="text-sm font-mono text-teal-300 break-all">0xbc738faefe084ffb20d47da5401e22a0f8e783c5827a94eecad1fbe2ac1fbda0</p>
+                        <p className="text-sm font-mono text-teal-300 break-all">0x78cb98eb9b01f470c631481e13093f88a7fedd0c8f61b0567abe9a53d567e155</p>
                       </div>
                     </div>
                   </div>
@@ -385,6 +392,11 @@ function App() {
                 <div className="flex-1">
                   <p className="text-sm font-bold">Transaction Confirmed</p>
                   <p className="text-xs text-slate-400 font-mono mt-1">Tx: {txHash.substring(0,16)}...</p>
+                  {gasUsed && (
+                    <p className="text-xs text-emerald-400 font-mono mt-1">
+                      Gas Used: {Number(gasUsed).toLocaleString()}
+                    </p>
+                  )}
                 </div>
                 <button onClick={() => setTxHash(null)} className="text-slate-400 hover:text-white">&times;</button>
               </motion.div>

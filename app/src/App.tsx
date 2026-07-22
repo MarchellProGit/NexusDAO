@@ -296,7 +296,7 @@ function App() {
                         <div className="bg-emerald-500/20 text-emerald-400 px-2 py-1 rounded font-bold text-xs mt-0.5">W2</div>
                         <div>
                           <p className="text-sm font-bold text-white">Cast Vote (Write Transaction)</p>
-                          <p className="text-xs text-slate-400 mt-1">Mengonsumsi <span className="text-emerald-300">~230,000 Gas</span>. Menghasilkan event Voted.</p>
+                          <p className="text-xs text-slate-400 mt-1">Mengonsumsi <span className="text-emerald-300">~73,300 Gas</span>. Menghasilkan event Voted.</p>
                         </div>
                       </div>
                       <div className="flex gap-3 items-start bg-emerald-500/10 p-3 rounded-lg border border-emerald-500/20">

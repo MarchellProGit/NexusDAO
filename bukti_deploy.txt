@@ -20,7 +20,7 @@ BUKTI TRANSAKSI WRITE & READ (APLIKASI)
 
    - Aplikasi memanggil fungsi "castVote" (Write).
    - [Tx Hash: _(Salin dari notifikasi Toast Hijau di Web)_ ]
-   - Mengonsumsi Gas: ~230,000 gas.
+   - Mengonsumsi Gas: ~73,300 gas.
    - State berubah (Jumlah vote bertambah).
 
    - Aplikasi memanggil fungsi "getProposal" (Read).

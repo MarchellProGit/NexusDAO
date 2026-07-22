@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getSigner, getContract, ACCOUNTS } from './lib/ethereum';
-import { PlusCircle, CheckCircle2, AlertCircle, Building2, ThumbsUp, ThumbsDown, Trash2, LayoutDashboard, ChevronDown, Users, X, Fingerprint } from 'lucide-react';
+import { PlusCircle, CheckCircle2, AlertCircle, Building2, ThumbsUp, ThumbsDown, Trash2, LayoutDashboard, ChevronDown, Users, X, Fingerprint, Lock } from 'lucide-react';
 
 interface Proposal {
   id: number;
@@ -139,6 +139,27 @@ function App() {
       loadData();
     } catch (err: any) {
       setError(err.reason || "Deletion failed.");
+    }
+    setLoading(false);
+  };
+
+  const handleClose = async (id: number) => {
+    if (!window.confirm("Are you sure you want to close this proposal? Voting will be disabled permanently.")) return;
+    
+    setLoading(true);
+    setError(null);
+    setTxHash(null);
+    setGasUsed(null);
+    try {
+      const signer = getSigner(currentAccount.key);
+      const contract = getContract(signer);
+      const tx = await contract.closeProposal(id);
+      setTxHash(tx.hash);
+      const receipt = await tx.wait();
+      if(receipt && receipt.gasUsed) { setGasUsed(receipt.gasUsed.toString()); }
+      loadData();
+    } catch (err: any) {
+      setError(err.reason || "Closing failed. You might not be the creator.");
     }
     setLoading(false);
   };
@@ -307,6 +328,13 @@ function App() {
                         </div>
                       </div>
                       <div className="flex gap-3 items-start bg-emerald-500/10 p-3 rounded-lg border border-emerald-500/20">
+                        <div className="bg-emerald-500/20 text-emerald-400 px-2 py-1 rounded font-bold text-xs mt-0.5">W4</div>
+                        <div>
+                          <p className="text-sm font-bold text-white">Close Proposal (Write Transaction)</p>
+                          <p className="text-xs text-slate-400 mt-1">Mengunci proposal dari voting lanjutan. Menghasilkan event ProposalClosed.</p>
+                        </div>
+                      </div>
+                      <div className="flex gap-3 items-start bg-emerald-500/10 p-3 rounded-lg border border-emerald-500/20">
                         <div className="bg-emerald-500/20 text-emerald-400 px-2 py-1 rounded font-bold text-xs mt-0.5">R1</div>
                         <div>
                           <p className="text-sm font-bold text-white">Get Proposal Data (Read Query)</p>
@@ -463,15 +491,28 @@ function App() {
                             <h3 className="text-3xl font-bold text-white">{p.title}</h3>
                           </div>
                           
-                          {/* Delete Button */}
-                          <button 
-                            onClick={() => handleDelete(p.id)}
-                            disabled={loading}
-                            className="text-slate-400 hover:text-rose-400 p-3 rounded-xl hover:bg-rose-500/10 transition-colors border border-transparent hover:border-rose-500/20"
-                            title="Delete Proposal"
-                          >
-                            <Trash2 className="w-5 h-5" />
-                          </button>
+                          <div className="flex items-center gap-2">
+                            {/* Close Button */}
+                            {p.active && (
+                              <button 
+                                onClick={() => handleClose(p.id)}
+                                disabled={loading}
+                                className="text-slate-400 hover:text-amber-400 p-3 rounded-xl hover:bg-amber-500/10 transition-colors border border-transparent hover:border-amber-500/20"
+                                title="Close Proposal"
+                              >
+                                <Lock className="w-5 h-5" />
+                              </button>
+                            )}
+                            {/* Delete Button */}
+                            <button 
+                              onClick={() => handleDelete(p.id)}
+                              disabled={loading}
+                              className="text-slate-400 hover:text-rose-400 p-3 rounded-xl hover:bg-rose-500/10 transition-colors border border-transparent hover:border-rose-500/20"
+                              title="Delete Proposal"
+                            >
+                              <Trash2 className="w-5 h-5" />
+                            </button>
+                          </div>
                         </div>
                         
                         <div className="mb-8">

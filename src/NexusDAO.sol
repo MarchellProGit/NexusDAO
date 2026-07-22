@@ -12,6 +12,7 @@ contract NexusDAO {
     }
 
     uint256 public proposalCount;
+    address public admin;
     mapping(uint256 => Proposal) public proposals;
     mapping(address => mapping(uint256 => bool)) public hasVoted;
 
@@ -19,6 +20,10 @@ contract NexusDAO {
     event Voted(uint256 indexed proposalId, address indexed voter, bool support);
     event ProposalClosed(uint256 id);
     event ProposalDeleted(uint256 id);
+
+    constructor() {
+        admin = msg.sender;
+    }
 
     // WRITE 1: Create Proposal
     function createProposal(string memory _title, string memory _description) public {
@@ -51,11 +56,10 @@ contract NexusDAO {
 
     // WRITE 3: Close Proposal
     function closeProposal(uint256 _proposalId) public {
+        require(msg.sender == admin, "Access Denied: Only Admin can close proposals");
         require(_proposalId > 0 && _proposalId <= proposalCount, "Invalid proposal ID");
         require(proposals[_proposalId].active, "Proposal is already closed");
 
-        // In a production governance system, this would be protected by an onlyOwner or RBAC modifier.
-        // For testing and TR purposes, access control is relaxed.
         proposals[_proposalId].active = false;
 
         emit ProposalClosed(_proposalId);
@@ -63,6 +67,7 @@ contract NexusDAO {
 
     // WRITE 4: Delete Proposal
     function deleteProposal(uint256 _proposalId) public {
+        require(msg.sender == admin, "Access Denied: Only Admin can delete proposals");
         require(_proposalId > 0 && _proposalId <= proposalCount, "Invalid proposal ID");
         require(bytes(proposals[_proposalId].title).length > 0, "Proposal already deleted");
 

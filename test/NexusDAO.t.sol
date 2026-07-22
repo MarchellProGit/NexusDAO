@@ -60,6 +60,13 @@ contract NexusDAOTest is Test {
         dao.castVote(1, true);
     }
 
+    function testCannotCloseAsNonAdmin() public {
+        dao.createProposal("Proposal 1", "Description");
+        vm.expectRevert("Access Denied: Only Admin can close proposals");
+        vm.prank(user1);
+        dao.closeProposal(1);
+    }
+
     function testDeleteProposal() public {
         dao.createProposal("Proposal to delete", "desc");
         dao.deleteProposal(1);
@@ -67,5 +74,12 @@ contract NexusDAOTest is Test {
         (uint256 id, string memory title,,,,) = dao.getProposal(1);
         assertEq(bytes(title).length, 0); // Deleted struct strings default to empty
         assertEq(id, 0); // uints default to 0
+    }
+
+    function testCannotDeleteAsNonAdmin() public {
+        dao.createProposal("Proposal to delete", "desc");
+        vm.expectRevert("Access Denied: Only Admin can delete proposals");
+        vm.prank(user1);
+        dao.deleteProposal(1);
     }
 }

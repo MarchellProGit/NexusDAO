@@ -42,33 +42,42 @@ The `NexusDAO.sol` contract implements comprehensive state management functional
 ## Deployment and Installation Guide
 
 ### Prerequisites
-- Node.js (v18+)
-- Foundry (Forge, Anvil, Cast)
+- [Node.js (v18+)](https://nodejs.org/)
+- [Foundry (Forge, Anvil, Cast)](https://book.getfoundry.sh/getting-started/installation)
+- [Git](https://git-scm.com/)
 
-### 1. Initialize Local Blockchain Node
-Open a terminal and start the local Anvil node:
+### 1. Clone the Repository
+Begin by cloning the project repository to your local machine:
 ```bash
-cd ~/my-dapp
+git clone https://github.com/MarchellProGit/NexusDAO.git
+cd NexusDAO
+```
+
+### 2. Initialize Local Blockchain Node
+Open a terminal and start the local Anvil node (which simulates the Ethereum network):
+```bash
 anvil
 ```
 
-### 2. Deploy the Smart Contract
-In a separate terminal, deploy the `NexusDAO` contract using Forge:
+### 3. Deploy the Smart Contract
+In a separate terminal, deploy the `NexusDAO` contract to the local network using Forge:
 ```bash
-cd ~/my-dapp
 forge create src/NexusDAO.sol:NexusDAO --rpc-url http://127.0.0.1:8545 --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 --broadcast
 ```
-*Note the deployed contract address from the terminal output.*
+*Note: Copy the deployed contract address from the terminal output (e.g., `Deployed to: 0x...`).*
 
-### 3. Configure the Client Interface
-*   Navigate to the frontend directory: `app/src/lib/ethereum.ts`.
-*   Update the `CONTRACT_ADDRESS` constant with the address generated in the previous step.
-*   Install dependencies and start the development server:
-```powershell
-cd C:\Users\HP VICTUS 15\Desktop\Study\SEMESTER 9\BLOCKCHAIN\TR\app
+### 4. Configure and Run the Client Interface
+Navigate to the frontend application directory, update the configuration, and launch the development server:
+```bash
+cd app
+```
+*   Open the file `src/lib/ethereum.ts` in your code editor.
+*   Update the `CONTRACT_ADDRESS` constant with the address generated in Step 3.
+*   Install dependencies and start the application:
+```bash
 npm install
 npm run dev
 ```
 
-### 4. Application Access
+### 5. Application Access
 Access the application at `http://localhost:5173/` or `http://localhost:5174/` (depending on the port assigned by Vite). Click the "System Documentation" menu in the header for a detailed breakdown of the technical specifications and real-time execution logs.

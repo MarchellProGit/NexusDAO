@@ -23,6 +23,16 @@ BUKTI TRANSAKSI WRITE & READ (APLIKASI)
    - Mengonsumsi Gas: ~73,300 gas.
    - State berubah (Jumlah vote bertambah).
 
+   - Aplikasi memanggil fungsi "deleteProposal" (Write).
+   - [Tx Hash: _(Salin dari notifikasi Toast Hijau di Web)_ ]
+   - Mengonsumsi Gas: ~44,700 gas.
+   - State berubah (Proposal dihapus dari storage).
+
+   - Aplikasi memanggil fungsi "closeProposal" (Write).
+   - [Tx Hash: _(Salin dari notifikasi Toast Hijau di Web)_ ]
+   - Mengonsumsi Gas: ~25,552 gas.
+   - State berubah (Status proposal menjadi closed/tidak aktif).
+
    - Aplikasi memanggil fungsi "getProposal" (Read).
    - Biaya 0 gas (View function).
    - Berhasil mereturn State/Data proposal secara realtime dari blockchain ke frontend.

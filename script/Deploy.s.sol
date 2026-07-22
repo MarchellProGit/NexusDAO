@@ -10,7 +10,7 @@ contract DeployScript is Script {
         vm.startBroadcast(deployerPrivateKey);
 
         NexusDAO nexusDAO = new NexusDAO();
-        
+
         vm.stopBroadcast();
     }
 }

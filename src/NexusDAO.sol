@@ -54,9 +54,9 @@ contract NexusDAO {
         require(_proposalId > 0 && _proposalId <= proposalCount, "Invalid proposal ID");
         require(proposals[_proposalId].active, "Proposal is already closed");
 
-        // In a real DAO, only the creator or an admin would do this, or time-based.
-        // For TR simplicity, anyone can close it.
-        proposals[_proposalId].active = false;
+    // In a production governance system, this would be protected by an onlyOwner or RBAC modifier.
+    // For testing and TR purposes, access control is relaxed.
+    proposals[_proposalId].active = false;
 
         emit ProposalClosed(_proposalId);
     }

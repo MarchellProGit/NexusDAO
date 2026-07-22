@@ -228,28 +228,32 @@ function App() {
               </button>
               
               <div className="p-8 sm:p-12">
-                <div className="text-center mb-12">
+                <div className="text-center mb-10">
                   <h2 className="text-4xl font-bold text-white mb-4 text-gradient">NexusDAO Ecosystem</h2>
-                  <p className="text-slate-400 text-lg">A robust implementation of decentralized governance.</p>
+                  <p className="text-slate-400 text-lg">Tugas Rancang Blockchain - Dokumentasi Kepatuhan Sistem</p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
-                  <div className="glass-input p-8">
-                    <BookOpen className="w-8 h-8 text-indigo-400 mb-5" />
-                    <h3 className="text-xl font-bold text-white mb-3">How it Works</h3>
-                    <ul className="space-y-3 text-slate-300 text-sm">
-                      <li className="flex items-start gap-3"><div className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-1.5 shrink-0"></div><span><strong>Create:</strong> Submit on-chain proposals transparently.</span></li>
-                      <li className="flex items-start gap-3"><div className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-1.5 shrink-0"></div><span><strong>Vote:</strong> Support or reject proposals (1 vote per wallet identity).</span></li>
-                      <li className="flex items-start gap-3"><div className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-1.5 shrink-0"></div><span><strong>Delete:</strong> Permanently erase data from EVM storage.</span></li>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+                  <div className="glass-input p-8 border-l-4 border-l-emerald-500">
+                    <h3 className="text-xl font-bold text-white mb-3 flex items-center gap-2">
+                      <span className="bg-emerald-500/20 text-emerald-400 p-1.5 rounded-lg"><CheckCircle2 className="w-5 h-5" /></span>
+                      Kepatuhan Kriteria TR
+                    </h3>
+                    <ul className="space-y-3 text-slate-300 text-sm mt-5">
+                      <li className="flex items-start gap-3"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0"></div><span><strong>Smart Contract:</strong> 4 Fungsi Write (Create, Vote, Close, Delete), 3 Fungsi Read, & 4 Event. <em>(Memenuhi minimal 1W, 1R, 1E)</em>.</span></li>
+                      <li className="flex items-start gap-3"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0"></div><span><strong>Deployment:</strong> Dideploy ke Anvil Local Node dengan bukti tercatat di <code>bukti_deploy.txt</code>.</span></li>
+                      <li className="flex items-start gap-3"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0"></div><span><strong>Aplikasi & Transaksi:</strong> Web (DApp) ini dapat mengeksekusi langsung &gt;2 transaksi Write & &gt;1 query Read.</span></li>
                     </ul>
                   </div>
-                  <div className="glass-input p-8">
-                    <Code className="w-8 h-8 text-teal-400 mb-5" />
-                    <h3 className="text-xl font-bold text-white mb-3">Technical Stack</h3>
-                    <ul className="space-y-3 text-slate-300 text-sm">
-                      <li className="flex items-start gap-3"><div className="w-1.5 h-1.5 rounded-full bg-teal-500 mt-1.5 shrink-0"></div><span><strong>Smart Contract:</strong> Solidity & Foundry (Anvil).</span></li>
-                      <li className="flex items-start gap-3"><div className="w-1.5 h-1.5 rounded-full bg-teal-500 mt-1.5 shrink-0"></div><span><strong>Frontend:</strong> React, TypeScript, Vite.</span></li>
-                      <li className="flex items-start gap-3"><div className="w-1.5 h-1.5 rounded-full bg-teal-500 mt-1.5 shrink-0"></div><span><strong>Integration:</strong> Ethers.js via Local RPC.</span></li>
+                  <div className="glass-input p-8 border-l-4 border-l-teal-500">
+                    <h3 className="text-xl font-bold text-white mb-3 flex items-center gap-2">
+                      <span className="bg-teal-500/20 text-teal-400 p-1.5 rounded-lg"><Code className="w-5 h-5" /></span>
+                      Informasi Lingkungan (Env)
+                    </h3>
+                    <ul className="space-y-3 text-slate-300 text-sm font-mono text-xs mt-5">
+                      <li className="flex items-start gap-3"><div className="w-1.5 h-1.5 rounded-full bg-teal-500 mt-1.5 shrink-0"></div><span className="break-all"><strong>Contract:</strong> 0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9</span></li>
+                      <li className="flex items-start gap-3"><div className="w-1.5 h-1.5 rounded-full bg-teal-500 mt-1.5 shrink-0"></div><span><strong>RPC URL:</strong> http://127.0.0.1:8545</span></li>
+                      <li className="flex items-start gap-3"><div className="w-1.5 h-1.5 rounded-full bg-teal-500 mt-1.5 shrink-0"></div><span><strong>Network ID:</strong> 31337 (Anvil Local)</span></li>
                     </ul>
                   </div>
                 </div>

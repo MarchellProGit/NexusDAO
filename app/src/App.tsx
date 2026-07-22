@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getSigner, getContract, ACCOUNTS } from './lib/ethereum';
-import { PlusCircle, CheckCircle2, AlertCircle, Building2, ThumbsUp, ThumbsDown, Trash2, LayoutDashboard, ChevronDown, Users, BookOpen, X, Code, Fingerprint } from 'lucide-react';
+import { PlusCircle, CheckCircle2, AlertCircle, Building2, ThumbsUp, ThumbsDown, Trash2, LayoutDashboard, ChevronDown, Users, X, Fingerprint } from 'lucide-react';
 
 interface Proposal {
   id: number;
@@ -229,8 +229,8 @@ function App() {
               
               <div className="p-8 sm:p-12">
                 <div className="text-center mb-10">
-                  <h2 className="text-4xl font-bold text-white mb-4 text-gradient">Laporan Kepatuhan Sistem (TR)</h2>
-                  <p className="text-slate-400 text-lg">Detail Implementasi & Kriteria Penerimaan Minimum</p>
+                  <h2 className="text-4xl font-bold text-white mb-4 text-gradient">System Documentation</h2>
+                  <p className="text-slate-400 text-lg">Technical Specification & Environmental Information</p>
                 </div>
 
                 <div className="space-y-6 mb-10">
@@ -238,15 +238,15 @@ function App() {
                   <div className="glass-input p-6 border-l-4 border-l-indigo-500">
                     <h3 className="text-lg font-bold text-white mb-2 flex items-center gap-2">
                       <CheckCircle2 className="w-5 h-5 text-indigo-400" />
-                      1. Smart Contract & Fungsi (Solidity)
+                      1. Smart Contract Capabilities
                     </h3>
                     <p className="text-slate-300 text-sm leading-relaxed mb-3">
-                      Sistem menggunakan satu Smart Contract utama (<code className="bg-white/10 px-1.5 py-0.5 rounded text-indigo-300">NexusDAO.sol</code>) yang memiliki:
+                      Sistem menggunakan satu Smart Contract utama (<code className="bg-white/10 px-1.5 py-0.5 rounded text-indigo-300">NexusDAO.sol</code>) yang mencakup:
                     </p>
                     <ul className="list-disc list-inside text-slate-400 text-sm space-y-1 ml-2">
-                      <li><strong>4 Fungsi Write:</strong> <code className="text-slate-300">createProposal</code>, <code className="text-slate-300">castVote</code>, <code className="text-slate-300">closeProposal</code>, <code className="text-slate-300">deleteProposal</code>.</li>
-                      <li><strong>3 Fungsi Read:</strong> <code className="text-slate-300">getProposal</code>, <code className="text-slate-300">proposalCount</code>, <code className="text-slate-300">hasVoted</code>.</li>
-                      <li><strong>4 Event:</strong> <code className="text-slate-300">ProposalCreated</code>, <code className="text-slate-300">Voted</code>, <code className="text-slate-300">ProposalClosed</code>, <code className="text-slate-300">ProposalDeleted</code>.</li>
+                      <li><strong>4 Write Functions:</strong> <code className="text-slate-300">createProposal</code>, <code className="text-slate-300">castVote</code>, <code className="text-slate-300">closeProposal</code>, <code className="text-slate-300">deleteProposal</code>.</li>
+                      <li><strong>3 Read Functions:</strong> <code className="text-slate-300">getProposal</code>, <code className="text-slate-300">proposalCount</code>, <code className="text-slate-300">hasVoted</code>.</li>
+                      <li><strong>4 Event Loggers:</strong> <code className="text-slate-300">ProposalCreated</code>, <code className="text-slate-300">Voted</code>, <code className="text-slate-300">ProposalClosed</code>, <code className="text-slate-300">ProposalDeleted</code>.</li>
                     </ul>
                   </div>
 
@@ -254,15 +254,15 @@ function App() {
                   <div className="glass-input p-6 border-l-4 border-l-teal-500">
                     <h3 className="text-lg font-bold text-white mb-2 flex items-center gap-2">
                       <CheckCircle2 className="w-5 h-5 text-teal-400" />
-                      2. Deployment Node Lokal (Anvil)
+                      2. Local Node Environment (Anvil)
                     </h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
                       <div className="bg-slate-900/50 p-4 rounded-xl border border-white/5">
-                        <p className="text-xs text-slate-400 uppercase tracking-widest font-bold mb-1">Alamat Kontrak</p>
-                        <p className="text-sm font-mono text-teal-300 break-all">{CONTRACT_ADDRESS}</p>
+                        <p className="text-xs text-slate-400 uppercase tracking-widest font-bold mb-1">Contract Address</p>
+                        <p className="text-sm font-mono text-teal-300 break-all">0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9</p>
                       </div>
                       <div className="bg-slate-900/50 p-4 rounded-xl border border-white/5">
-                        <p className="text-xs text-slate-400 uppercase tracking-widest font-bold mb-1">Tx Hash Deploy</p>
+                        <p className="text-xs text-slate-400 uppercase tracking-widest font-bold mb-1">Deployment Tx Hash</p>
                         <p className="text-sm font-mono text-teal-300 break-all">0xbc738faefe084ffb20d47da5401e22a0f8e783c5827a94eecad1fbe2ac1fbda0</p>
                       </div>
                     </div>
@@ -272,31 +272,31 @@ function App() {
                   <div className="glass-input p-6 border-l-4 border-l-emerald-500">
                     <h3 className="text-lg font-bold text-white mb-2 flex items-center gap-2">
                       <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-                      3 & 4. Antarmuka Web3 & Interaksi Write/Read
+                      3. Web3 Interface & Real-time Transactions
                     </h3>
                     <p className="text-slate-300 text-sm leading-relaxed mb-4">
-                      Frontend berbasis React & Ethers.js memanggil 2 transaksi write utama dan 1 query read secara dinamis. Setiap aksi pengguna direkam langsung ke Blockchain lokal.
+                      Antarmuka aplikasi berbasis React & Ethers.js mengeksekusi fungsi baca-tulis dan merekam jejak data secara permanen di Blockchain.
                     </p>
                     <div className="space-y-3">
                       <div className="flex gap-3 items-start bg-emerald-500/10 p-3 rounded-lg border border-emerald-500/20">
                         <div className="bg-emerald-500/20 text-emerald-400 px-2 py-1 rounded font-bold text-xs mt-0.5">W1</div>
                         <div>
-                          <p className="text-sm font-bold text-white">Buat Proposal (createProposal)</p>
+                          <p className="text-sm font-bold text-white">Create Proposal (Write Transaction)</p>
                           <p className="text-xs text-slate-400 mt-1">Mengonsumsi <span className="text-emerald-300">~140,000 Gas</span>. Menghasilkan event ProposalCreated.</p>
                         </div>
                       </div>
                       <div className="flex gap-3 items-start bg-emerald-500/10 p-3 rounded-lg border border-emerald-500/20">
                         <div className="bg-emerald-500/20 text-emerald-400 px-2 py-1 rounded font-bold text-xs mt-0.5">W2</div>
                         <div>
-                          <p className="text-sm font-bold text-white">Voting (castVote)</p>
+                          <p className="text-sm font-bold text-white">Cast Vote (Write Transaction)</p>
                           <p className="text-xs text-slate-400 mt-1">Mengonsumsi <span className="text-emerald-300">~230,000 Gas</span>. Menghasilkan event Voted.</p>
                         </div>
                       </div>
                       <div className="flex gap-3 items-start bg-emerald-500/10 p-3 rounded-lg border border-emerald-500/20">
                         <div className="bg-emerald-500/20 text-emerald-400 px-2 py-1 rounded font-bold text-xs mt-0.5">R1</div>
                         <div>
-                          <p className="text-sm font-bold text-white">Baca Data (getProposal)</p>
-                          <p className="text-xs text-slate-400 mt-1">View function, 0 Gas Fee. Dipanggil otomatis saat aplikasi dimuat.</p>
+                          <p className="text-sm font-bold text-white">Get Proposal Data (Read Query)</p>
+                          <p className="text-xs text-slate-400 mt-1">View function (0 Gas Fee). Dipanggil otomatis saat state dirender ulang.</p>
                         </div>
                       </div>
                     </div>
@@ -306,24 +306,24 @@ function App() {
                   <div className="glass-input p-6 border-l-4 border-l-purple-500">
                     <h3 className="text-lg font-bold text-white mb-2 flex items-center gap-2">
                       <CheckCircle2 className="w-5 h-5 text-purple-400" />
-                      5. Dokumentasi State, Akun & Gas
+                      4. State Dynamics & Identitas Pengguna
                     </h3>
                     <ul className="space-y-4 text-slate-300 text-sm mt-4">
                       <li>
-                        <strong className="text-white block mb-1">Perubahan State (State Changes):</strong>
-                        Saat fungsi <code>createProposal</code> dipanggil, EVM mengalokasikan storage baru untuk array Proposal. Fungsi <code>getProposal</code> merefleksikan perubahan ini seketika (Read). Saat <code>deleteProposal</code> dipanggil, slot storage EVM dihapus secara permanen.
+                        <strong className="text-white block mb-1">On-chain State Changes:</strong>
+                        Setiap kali <code>createProposal</code> dipanggil, slot storage EVM baru terbentuk untuk menyimpan Struct Proposal. Ketika <code>deleteProposal</code> dijalankan, data dalam mapping akan direset (dihapus permanen dari EVM state).
                       </li>
                       <li>
-                        <strong className="text-white block mb-1">Alamat Akun Testing:</strong>
+                        <strong className="text-white block mb-1">Alamat Dompet (Accounts):</strong>
                         <div className="font-mono text-xs text-purple-300 bg-slate-900/50 p-2 rounded mt-1 border border-white/5">
-                          Admin: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266<br/>
-                          User 1: 0x70997970C51812dc3A010C7d01b50e0d17dc79C8<br/>
-                          User 2: 0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC
+                          Admin (0xf39Fd6e5...): Pak TIB<br/>
+                          User 1 (0x70997970...): Marchell<br/>
+                          User 2 (0x3C44CdDd...): Nova
                         </div>
                       </li>
                       <li>
                         <strong className="text-white block mb-1">Transaction Hash Live:</strong>
-                        Setiap transaksi yang berhasil akan memunculkan Toast Notifications berwarna hijau di pojok kanan bawah yang berisi string 66 karakter (Tx Hash) bukti pencatatan ke ledger Ethereum.
+                        Saat fungsi Write dieksekusi, Tx Hash otentik (66-karakter hex string) akan langsung diproses dan ditampilkan melalui Toast Notifications di sudut layar.
                       </li>
                     </ul>
                   </div>
